@@ -1,0 +1,133 @@
+<!DOCtype html><html>
+<head>
+<title> BPM to Frames Tool</title>
+</head>
+<body>
+<style>
+	body {
+		background-color: #17171b;
+		color:rgb(210, 210, 210)
+	}
+
+</style>
+<div><br><!-- BUTTONS + TEXTFIELD -->
+<br>&nbsp;	<b>BPM</b>
+<br>&nbsp;	<input type="text" name="bpm" id="xBPM" value=""><br>
+<br>&nbsp;	<b>Frame Rate</b>
+<br>&nbsp;	<input type="text" name="fps" id="xFPS" value=""><br>
+
+<br>&nbsp;	<input type="submit" value="Submit" onclick="add()" />
+</div>
+
+<script language="Javascript" type="text/javascript">
+function add()
+{
+	var writeTable = document.getElementById('frameList');
+	var writeFrames = document.getElementById('keyf');
+	var bpmINP = document.getElementById('xBPM').value;
+	var bpmCon = 0;
+	var fpsINP = document.getElementById('xFPS').value;
+	var fpsCon = 0;
+	var displayVal = document.getElementById('display');
+	var fpmMath = 0;
+
+	writeTable.innerHTML = "Beat";
+	writeFrames.innerHTML = "Frame";
+	bpmCon = bpmINP + bpmCon;
+	fpsCon = fpsINP + fpsCon;
+	fpmMath = fpsCon * 60;
+	frames4Beat = fpmMath / bpmCon;
+	frames8Beat = frames4Beat / 2;
+	frames1stBeat = frames4Beat * 4;
+	frames4Beat = Math.round((frames4Beat + Number.EPSILON) * 100) / 100;
+	frames8Beat = Math.round((frames8Beat + Number.EPSILON) * 100) / 100;
+	frames1stBeat = Math.round((frames1stBeat + Number.EPSILON) * 100) / 100;
+
+	var beatTime = bpmINP / 60; //amt of beats per sec
+	beatTime %= 1; //get falloff amt 
+	console.log(beatTime);
+	var falloffCount = 0;
+	var fCount = 1;
+	var fNumber = 1;
+	var loopCount = 1 / beatTime; //how many beats to skip before factoring in extra frame
+	var lastKey = false;
+	/*writeTable.innerHTML = 
+	"<table><thead><tr><th colspan='2'>~ Timing ~</th></tr></thead><tbody>";*/
+	for (var i = 0; i < loopCount; i++){
+		//console.log(beatTime);
+		falloffCount += beatTime;
+		if (falloffCount > 1){
+			fNumber--;
+			console.log("-1f");
+		}
+		writeFrames.innerHTML +=
+		"<td><div id='f" + fCount + "'> " + fNumber + " &nbsp;</div></td>";
+		check4th();
+		//"<tr><td>" + fCount + "</td>/<td><div id='f" + fCount + "'>" + fNumber + "</div></td></tr>";
+		fCount++;
+		fNumber += Math.floor(frames4Beat);
+	}
+	lastKey = true;
+	check4th();
+	//todo table still fucky
+	function check4th(){
+		if ((fCount - 1) % 4){
+			writeTable.innerHTML += 
+			"<td><div id='b" + fCount + "'> " + fCount + " &nbsp;</div></td>";
+		}
+		else {
+			writeTable.innerHTML += 
+			"<td><div id='b" + fCount + "'><b>" + fCount + "</b> &nbsp;</div></td>";
+		}
+		if (lastKey == true){
+
+			fNumber--;
+		}
+	}
+	writeFrames.innerHTML +=
+		"<td><div id='f" + fCount + "'> " + fNumber + " &nbsp;</div></td>";
+	writeTable.innerHTML += "/ loopOut";
+	//writeTable.innerHTML += "</tbody></table>"
+	
+	
+	//todo frame count until whole number again for loopOut cause of eventual falloff timing
+
+	displayVal.innerHTML = 
+	"<b>" + frames1stBeat + "</b> frames on 1st beat of measure<br><b>" + frames4Beat +
+	"</b> frames per beat on 4th beats <br><b>" + frames8Beat +
+	"</b> frames per beat on 8th beats <br>";
+}
+</script>
+
+<!-- ================================================== 
+echo matte choker simple choker-->
+
+<br><hr>
+<div id="display">
+	&nbsp;			
+</div>
+<hr>
+<div id="fTable">
+	<table>
+		<thead>
+			<tr><th colspan='2'>~ Timing ~</th></tr>
+		</thead>
+		<tbody>
+				<tr id = 'frameList'>
+					<td>Beat</td>
+				</tr>
+				<tr id = 'keyf'>
+					<td>Frame</td>
+				</tr>
+				<tr>
+		</tbody>
+	</table>
+</div>
+<p>
+<br><a href="http://www.all8.com/tools/bpm.htm">BPM Tap</a> 
+<br><iframe scrolling="no" height="370" src="http://www.all8.com/tools/bpm.htm"</iframe>
+</p>
+</body>
+</html>
+
+
